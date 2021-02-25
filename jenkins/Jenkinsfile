@@ -1,5 +1,6 @@
 pipeline {
     agent {
+        // anget is  container
         docker {
             image 'maven:3-alpine'
             args '-v /root/.m2:/root/.m2'
@@ -7,21 +8,25 @@ pipeline {
     }
     stages {
         stage('Build') {
+            // maven build to jar file  with no test
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
         stage('Test') {
+            // doing unit test 
             steps {
                 sh 'mvn test'
             }
             post {
+                // after  integration test
                 always {
                     junit 'target/surefire-reports/*.xml'
                 }
             }
         }
         stage('Deliver') {
+            // excute deliver script it stage test is done
             steps {
                 sh './jenkins/scripts/deliver.sh'
             }
